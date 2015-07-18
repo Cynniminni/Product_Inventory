@@ -11,11 +11,11 @@ public class JDBCDriver {
 	//**********************************
 	//	initialize
 	//**********************************
-	static final String JDBC_CONNECTION = "jdbc:mysql://localhost:3306/inventory";
-	static final String SELECT_PRODUCTS = "SELECT * FROM products";
-	static final String USER = "root";
-	static final String PASS = "Ajo1000mbw1s!!";
+	private static final String JDBC_CONNECTION = "jdbc:mysql://localhost:3306/inventory";
+	private static final String USER = "root";
+	private static final String PASS = "Ajo1000mbw1s!!";
 	
+	public static final String SELECT_PRODUCTS = "SELECT * FROM products";
 	public static String divider = "=======================================";
 	public static String format = "%3s %20s %10s %10s %15s %n";
 	
@@ -58,7 +58,7 @@ public class JDBCDriver {
 					"Quantity",
 					"Price",
 					"Category");
-			System.out.println(divider + divider);
+			System.out.println(divider + divider);			
 			
 			//process the result set
 			while (result.next()) {
@@ -67,7 +67,7 @@ public class JDBCDriver {
 						result.getString("name"),
 						result.getString("quantity"),
 						result.getString("price"),
-						result.getString("category"));
+						result.getString("category")).toString();				
 			}//end while
 			
 			conn.close();
@@ -76,6 +76,51 @@ public class JDBCDriver {
 			e.printStackTrace();
 		}	
 	}//end printtable
+	
+	//**********************************
+	//	select table & return as string
+	//**********************************
+	public static String selectTable() {
+		String resultText = "";
+		
+		try {
+			//get connection to the database
+			Connection conn = DriverManager.getConnection(
+					JDBC_CONNECTION, USER, PASS);
+		
+			//create a statement
+			Statement statement = conn.createStatement();
+			
+			//execute a query
+			ResultSet result = statement.executeQuery(SELECT_PRODUCTS);
+			
+			//resultText = divider + "\n";
+			resultText += String.format(format, 
+					"ID", 
+					"Product",
+					"Quantity",
+					"Price",
+					"Category");
+			//resultText += divider + "\n";
+						
+			//process the result set
+			while (result.next()) {
+				resultText += String.format(format, 
+						result.getString("id"),
+						result.getString("name"),
+						result.getString("quantity"),
+						result.getString("price"),
+						result.getString("category"));					
+			}//end while
+			
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		
+		return resultText;
+	}
 		
 	//**********************************
 	//	query methods
@@ -92,9 +137,11 @@ public class JDBCDriver {
 		
 	}
 
+	/*
 	public static void main(String[] args) {
 		testConnection();
 		printTable();
 	}//end main
+	*/
 	
 }//end class
