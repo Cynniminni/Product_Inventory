@@ -7,22 +7,27 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import main.productinventory.*;
 
+/**
+ * JDBCDriver establishes a connection to the database and provides the methods to 
+ * perform specific queries to.
+ * 
+ * @author Cynthia
+ *
+ */
+
 public class JDBCDriver {
 
-	//**********************************
-	//	initialize
-	//**********************************
 	private static final String JDBC_CONNECTION = "jdbc:mysql://localhost:3306/inventory";
 	private static final String USER = "root";
-	private static final String PASS = "Ajo1000mbw1s!!";
+	private static final String PASS = "RootPass2015";
 	
 	public static final String SELECT_PRODUCTS = "SELECT * FROM products ORDER BY category";
 	public static String divider = "==============================";
 	public static String format = "%20s %10s %10s %15s %n";
 	
-	//**********************************
-	//	test methods
-	//**********************************
+	/**
+	 * Tests the connection to the database and prints the result.
+	 */
 	public static void testConnection() {
 		try {			
 			//get connection to the database
@@ -35,50 +40,12 @@ public class JDBCDriver {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}//end try
-	}//end testconnection
-	
-	public static void printTable() {		
-		try {
-			//get connection to the database
-			Connection conn = DriverManager.getConnection(
-					JDBC_CONNECTION, USER, PASS);
-			
-			System.out.println("[debug]: Printing table \'products\'.");
-			System.out.println();
-			
-			//create a statement
-			Statement statement = conn.createStatement();
-			
-			//execute a query
-			ResultSet result = statement.executeQuery(SELECT_PRODUCTS);
-			
-			System.out.println(divider + divider);
-			System.out.format(format, 
-					"Product Name",
-					"Quantity",
-					"Price",
-					"Category");
-			System.out.println(divider + divider);			
-			
-			//process the result set
-			while (result.next()) {
-				System.out.format(format,
-						result.getString("name"),
-						result.getString("quantity"),
-						result.getString("price"),
-						result.getString("category")).toString();				
-			}//end while
-			
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-	}//end printtable
-	
-	//**********************************
-	//	select table & return as string
-	//**********************************
+	}//end testconnection	
+		
+	/**
+	 * Queries the database and returns all products as a formatted String.
+	 * @return A String representing all products currently in the database.
+	 */
 	public static String selectTable() {
 		String resultText = "";
 		
@@ -119,9 +86,11 @@ public class JDBCDriver {
 		return resultText;
 	}
 		
-	//**********************************
-	//	query methods
-	//**********************************
+	/**
+	 * Queries the database for a product using the product name.
+	 * @param name The name of the product.
+	 * @return A product matching that of the given name, if any.
+	 */
 	public static Product selectProduct(String name) {
 		Product product = new Product();
 		
@@ -154,6 +123,10 @@ public class JDBCDriver {
 		return product;		
 	}//end select product
 	
+	/**
+	 * Adds a new product to the database.
+	 * @param product The new product to add.
+	 */
 	public static void insertProduct(Product product) {
 		try {
 			//get connection to the database
@@ -177,6 +150,10 @@ public class JDBCDriver {
 		}
 	}//end insert product
 	
+	/**
+	 * Deletes a selected product that matches the name.
+	 * @param name The name of the product to be deleted.
+	 */
 	public static void deleteProduct(String name) {
 		try {
 			//get connection to the database
@@ -197,6 +174,12 @@ public class JDBCDriver {
 		}
 	}//end delete product
 	
+	/**
+	 * Updates a selected product with new information given by the user.
+	 * @param oldName The product to be updated. Since the user may change the name,
+	 * 'oldName' will be used to refer to the original product before alteration.
+	 * @param product The 'new' product that will be used to update the old one.
+	 */
 	public static void updateProduct(String oldName, Product product) {
 		try {
 			//get connection to the database
@@ -218,13 +201,5 @@ public class JDBCDriver {
 		} catch (Exception e) {	
 			e.printStackTrace();
 		}
-	}
-
-	/*
-	public static void main(String[] args) {
-		testConnection();
-		printTable();
-	}//end main
-	*/
-	
+	}//end update product
 }//end class

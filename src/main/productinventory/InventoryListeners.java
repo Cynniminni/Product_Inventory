@@ -7,7 +7,14 @@ import javax.swing.JTextField;
 
 import database.productinventory.JDBCDriver;
 
-
+/**
+ * InventoryListeners produces button listeners for the search,
+ * refresh, add, edit, and remove product functions in the
+ * InventoryGUI class.
+ * 
+ * @author Cynthia
+ *
+ */
 public class InventoryListeners {	
 	
 	private static JTextField searchBar;
@@ -16,6 +23,48 @@ public class InventoryListeners {
 		this.searchBar = searchBar;
 	}
 	
+	/**
+	 * Check if the given string is an integer.
+	 * @param s
+	 * @return The boolean to indicate true or false.
+	 */
+	private static boolean isInteger(String s) {
+		boolean isInt = false;
+		
+		try {
+			Integer.parseInt(s);
+			isInt = true;
+		} catch (NumberFormatException e) {
+			//not valid int
+		}//end try catch
+		
+		return isInt;
+	}//end is integer
+	
+	/**
+	 * Check if the given string is a double.
+	 * @param s
+	 * @return The boolean to indicate true or false.
+	 */
+	private static boolean isDouble(String s) {
+		boolean isDouble = false;
+		
+		try {
+			Double.parseDouble(s);
+			isDouble = true;
+		} catch (NumberFormatException e) {
+			//not valid int
+		}//end try catch
+		
+		return isDouble;
+	}//end is double		
+	
+	/**
+	 * This method will take the text from the searchbar, check
+	 * if it is an int, double, or string, and then query the
+	 * database for any matches.
+	 * @return The ActionListener for searching.
+	 */
 	public static ActionListener searchProductListener() {
 		return new ActionListener() {
 
@@ -23,6 +72,22 @@ public class InventoryListeners {
 			public void actionPerformed(ActionEvent e) {
 				//add something to the database
 				System.out.println("[debug]: Test search product!");
+				
+				String userInput = searchBar.getText();
+				
+				if (isInteger(userInput)) {
+					//search products by quantity
+					
+				} else if (isDouble(userInput)) {
+					//search products by price
+					
+				} else {
+					//search products by name
+					
+					//search products by category
+					
+				}//end if-else
+				
 				Product product = JDBCDriver.selectProduct(searchBar.getText());
 				
 				String result = String.format(JDBCDriver.format, 
@@ -37,6 +102,11 @@ public class InventoryListeners {
 		};
 	}//end editproduct
 	
+	/**
+	 * Queries database to return all products and updates
+	 * the inventory view.
+	 * @return The ActionListener for refreshing.
+	 */
 	public static ActionListener refreshProductListener() {
 		return new ActionListener() {
 
@@ -45,11 +115,15 @@ public class InventoryListeners {
 				//add something to the database
 				System.out.println("[debug]: Test refresh product!");
 				InventoryGUI.updateInventory();
-			}
-			
+			}			
 		};
 	}//end editproduct
 	
+	/**
+	 * Takes user input to create a new product and adds it 
+	 * to the database.
+	 * @return The ActionListener for adding a new product.
+	 */
 	public static ActionListener addProductListener() {
 		return new ActionListener() {
 
@@ -60,25 +134,25 @@ public class InventoryListeners {
 				
 				if (result == JOptionPane.OK_OPTION) {
 					//get user input and save as a product
-					Product product = new Product(InventoryPopups.name.getText(),
-							Integer.valueOf(InventoryPopups.quantity.getText()),
-							Double.valueOf(InventoryPopups.price.getText()),
-							InventoryPopups.category.getText());
+					Product product = new Product(InventoryPopups.getName(), 
+							InventoryPopups.getQuantityInt(), 
+							InventoryPopups.getPriceDouble(), 
+							InventoryPopups.getCategory());
 					
 					//insert into database
-					JDBCDriver.insertProduct(product);
-					
+					JDBCDriver.insertProduct(product);					
 					InventoryGUI.updateInventory();
-					System.out.println("[debug]: Product added successfully.");
-					System.out.println("[debug]: name = " + InventoryPopups.name.getText());
-					System.out.println("[debug]: quantity = " + InventoryPopups.quantity.getText());
-					System.out.println("[debug]: price = " + InventoryPopups.price.getText());
-					System.out.println("[debug]: category = " + InventoryPopups.category.getText());
 				}//end if
 			}			
 		};
 	}//end addproduct
 	
+	/**
+	 * Users select a product by name, after which they will edit
+	 * the existing fields for that product. Then the selected product
+	 * will be updated in the database.
+	 * @return The ActionListener for editing an existing product.
+	 */
 	public static ActionListener editProductListener() {
 		return new ActionListener() {
 
@@ -91,7 +165,7 @@ public class InventoryListeners {
 				//if user clicked OK
 				if (result == JOptionPane.OK_OPTION) {
 					//save old name of product selected
-					String oldName = InventoryPopups.name.getText();
+					String oldName = InventoryPopups.getName();
 					
 					//query the selected product
 					Product product = JDBCDriver.selectProduct(oldName);
@@ -100,27 +174,28 @@ public class InventoryListeners {
 					int editResult = InventoryPopups.showInputPopup(InventoryPopups.EDIT, product);
 					
 					if (editResult == JOptionPane.OK_OPTION) {
-						Product update = new Product(InventoryPopups.name.getText(),
-								Integer.valueOf(InventoryPopups.quantity.getText()),
-								Double.valueOf(InventoryPopups.price.getText()),
-								InventoryPopups.category.getText());						
+						Product update = new Product(InventoryPopups.getName(),
+								InventoryPopups.getQuantityInt(),
+								InventoryPopups.getPriceDouble(),
+								InventoryPopups.getCategory());						
 						
 						//update the product with new info 
 						JDBCDriver.updateProduct(oldName, update);
 						
 						//update inventory table
 						InventoryGUI.updateInventory();
-						
-						System.out.println("[debug]: name = " + InventoryPopups.name.getText());
-						System.out.println("[debug]: quantity = " + InventoryPopups.quantity.getText());
-						System.out.println("[debug]: price = " + InventoryPopups.price.getText());
-						System.out.println("[debug]: category = " + InventoryPopups.category.getText());
 					}//end inner if
 				}//end if
 			}			
 		};
 	}//end editproduct
 		
+	/**
+	 * User chooses the product to remove by name. A popup will appear
+	 * confirming the user's choice, and then removes the product from
+	 * the database.
+	 * @return The ActionListener for removing an existing product.
+	 */
 	public static ActionListener removeProductListener() {
 		return new ActionListener() {
 
@@ -131,7 +206,7 @@ public class InventoryListeners {
 				int choice = InventoryPopups.showSelectPopup();
 				
 				if (choice == JOptionPane.OK_OPTION) {					
-					String name = InventoryPopups.name.getText();
+					String name = InventoryPopups.getName();
 					int result = InventoryPopups.showConfirmationPopup(name);
 					
 					if (result == JOptionPane.OK_OPTION) {

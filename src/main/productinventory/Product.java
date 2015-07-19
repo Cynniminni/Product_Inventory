@@ -1,10 +1,10 @@
 package main.productinventory;
 
 public class Product {
-	public String name;
-	public String category;
-	public int quantity;
-	public double price;
+	private String name;
+	private String category;
+	private int quantity;
+	private double price;
 	
 	public Product() {
 		name = "Default Name";

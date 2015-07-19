@@ -1,24 +1,24 @@
 package main.productinventory;
 import database.productinventory.JDBCDriver;
 
-
+/**
+ * Initializes the GUI, establishes connection, and prints
+ * the list of products into the text area. 
+ * 
+ * @author Cynthia
+ *
+ */
 public class Main {
 
 	public static void main(String[] args) {
-		//runs all components for project
 		// initialize GUI
 		InventoryGUI gui = new InventoryGUI();
 		
 		// establish database connection
 		JDBCDriver.testConnection();
 				
-		// query database  
 		// print inventory into text area				
-		gui.updateInventory();
-		
-		// user can add, edit, or remove a product
-		// 
-		// to close, the user clicks on the X button
+		gui.updateInventory();		
 	}//end main
 	
 }//end class

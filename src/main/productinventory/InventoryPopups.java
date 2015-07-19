@@ -8,16 +8,22 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
+/**
+ * InventoryPopups produces the dialog windows that takes in and 
+ * confirms user input when adding, editing, or removing a product.
+ * 
+ * @author Cynthia
+ *
+ */
 public class InventoryPopups {
 	
-	public static JPanel 		inputPanel,
+	private static JPanel 		inputPanel,
 								containerPanel;
-	public static JTextField 	name,
+	private static JTextField 	name,
 								quantity,
 								price,
 								category;
-	public static JLabel		nameLabel,
+	private static JLabel		nameLabel,
 								quantityLabel,
 								priceLabel,
 								categoryLabel,
@@ -25,7 +31,10 @@ public class InventoryPopups {
 	public static final String ADD = "add";
 	public static final String EDIT = "edit";
 	
-	//initialize panel to hold multiple input fields
+	/**
+	 * Initializes the panel that will allow users to send
+	 * multiple inputs through the JTextFields.
+	 */
 	private static void initInputPanel() {		
 		name = new JTextField();
 		quantity = new JTextField();
@@ -57,7 +66,11 @@ public class InventoryPopups {
 		containerPanel.add(Box.createVerticalStrut(5));
 		containerPanel.add(inputPanel);
 	}//end init multi input panel
-	
+		
+	/**
+	 * Initializes the panel that allows users to select a product by 
+	 * entering a name.
+	 */
 	private static void initSelectProductPanel() {
 		messageLabel = new JLabel("Select the product by name:");		
 		name = new JTextField();
@@ -68,14 +81,48 @@ public class InventoryPopups {
 		containerPanel.add(Box.createVerticalStrut(5));
 		containerPanel.add(name);
 	}//end init select product panel
+		
+	public static String getName() {
+		return name.getText();
+	}
 	
-	public static void setInputFields(String n, String q, String p, String c) {
+	public static String getQuantity() {
+		return quantity.getText();
+	}
+	
+	public static int getQuantityInt() {
+		return Integer.valueOf(getQuantity());
+	}
+	
+	public static String getPrice() {
+		return price.getText();
+	}
+	
+	public static double getPriceDouble() {
+		return Double.valueOf(getPrice());
+	}
+	
+	public static String getCategory() {
+		return category.getText();
+	}
+	
+	/**
+	 * Used to populate the product fields when querying it from the database.
+	 * @param n The name of the product.
+	 * @param q The quantity of the product.
+	 * @param p The price of the product.
+	 * @param c The category of the product.
+	 */
+	private static void setInputFields(String n, String q, String p, String c) {
 		name.setText(n);
 		quantity.setText(q);
 		price.setText(p);
 		category.setText(c);
 	}//end set input fields
 	
+	/**
+	 * Creates the error dialog if something goes wrong.
+	 */
 	public static void showErrorPopup() {
 		JOptionPane.showMessageDialog(
 				null, 
@@ -84,6 +131,11 @@ public class InventoryPopups {
 				JOptionPane.ERROR_MESSAGE);
 	}//end show error dialog
 	
+	/**
+	 * Creates the confirmation dialog when the user wants to delete a product.
+	 * @param name The name of the selected product to delete.
+	 * @return An integer representing the user's choice. 
+	 */
 	public static int showConfirmationPopup(String name) {
 		int result = JOptionPane.showConfirmDialog(
 				null,
@@ -93,6 +145,13 @@ public class InventoryPopups {
 		return result;
 	}//end show confirmation dialog
 	
+	/**
+	 * Creates a dialog that lets users make multiple inputs to create 
+	 * or edit a product.
+	 * @param mode A selector to determine if the user is adding or editing a product.
+	 * @param product The product to be added or edited.
+	 * @return An integer representing the user's choice.
+	 */
 	public static int showInputPopup(String mode, Product product) {
 		String title = "";
 		initInputPanel();
@@ -117,6 +176,10 @@ public class InventoryPopups {
 		return result;
 	}//end show add popup dialog
 	
+	/**
+	 * Creates a dialog that allows users to select a product by name.
+	 * @return An integer representing the user's choice.
+	 */
 	public static int showSelectPopup() {
 		initSelectProductPanel();
 		int result = JOptionPane.showConfirmDialog(
@@ -125,5 +188,5 @@ public class InventoryPopups {
 				"Select Product",
 				JOptionPane.OK_CANCEL_OPTION);
 		return result;
-	}
+	}//end show select popup
 }//end class

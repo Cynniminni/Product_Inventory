@@ -14,6 +14,14 @@ import javax.swing.JTextField;
 
 import database.productinventory.JDBCDriver;
 
+/**
+ * InventoryGUI creates and assembles the user interface and attaches
+ * the necessary action listeners to the buttons.
+ * 
+ * @author Cynthia
+ *
+ */
+
 public class InventoryGUI {
 
 	private JFrame frame;
@@ -25,13 +33,11 @@ public class InventoryGUI {
 	private JPanel managePanel;
 	
 	private static JTextArea invenTable;
-	private JTextArea info;
 	
 	private JTextField searchBar;
 	
 	private JLabel searchHeader;
 	private JLabel manageHeader;
-	private JLabel infoHeader;
 	
 	private JButton searchProduct;
 	private JButton refreshInven;
@@ -40,12 +46,10 @@ public class InventoryGUI {
 	private JButton removeProduct;
 	
 	private String title = "Product Inventory";
-	private String text = "Welcome to the product inventory program. " +
-			"To the left is a display of the products currently in the database. " +
-			"All searching and management of products are done by referencing the " +
-			"product name, which is case-insensitive. " +
-			"Begin by using any of the buttons above.";
 		
+	/**
+	 * Initializes and assembles the GUI.
+	 */
 	public InventoryGUI() {
 		frame = new JFrame();
 		frame.setSize(700, 500);
@@ -118,20 +122,26 @@ public class InventoryGUI {
 		containerPanel = new JPanel();//has FlowLayout by default
 		containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.X_AXIS));
 		containerPanel.add(invenPanel);		
-		containerPanel.add(Box.createRigidArea(new Dimension(10,0)));
+		containerPanel.add(Box.createHorizontalStrut(10));
 		containerPanel.add(actionPanel);
+		containerPanel.add(Box.createHorizontalStrut(10));
 		
 		frame.add(containerPanel);
 	}
-
-	public JTextArea getInvenTable() {
-		return invenTable;
-	}
 	
+	/**
+	 * Updates the text area with the current listing of products
+	 * from the database.
+	 */
 	public static void updateInventory() {
 		invenTable.setText(JDBCDriver.selectTable());
 	}
 	
+	/**
+	 * Updates the text area with any search results (given by
+	 * InventoryListeners).
+	 * @param result The search result from InventoryListeners.
+	 */
 	public static void updateInventory(String result) {		
 		String header = JDBCDriver.divider + JDBCDriver.divider + "\n";
 		String titles = String.format(JDBCDriver.format, 
