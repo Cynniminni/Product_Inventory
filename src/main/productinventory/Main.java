@@ -1,3 +1,4 @@
+package main.productinventory;
 import database.productinventory.JDBCDriver;
 
 
@@ -13,7 +14,7 @@ public class Main {
 				
 		// query database  
 		// print inventory into text area				
-		gui.updateText(JDBCDriver.selectTable());
+		gui.updateInventory();
 		
 		// user can add, edit, or remove a product
 		// 
