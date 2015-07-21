@@ -123,10 +123,10 @@ public class InventoryPopups {
 	/**
 	 * Creates the error dialog if something goes wrong.
 	 */
-	public static void showErrorPopup() {
+	public static void showErrorPopup(String message) {
 		JOptionPane.showMessageDialog(
 				null, 
-				"Unable to make changes.", 
+				"Unable to make changes. " + message, 
 				"Error",
 				JOptionPane.ERROR_MESSAGE);
 	}//end show error dialog

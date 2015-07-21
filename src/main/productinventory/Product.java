@@ -5,6 +5,7 @@ public class Product {
 	private String category;
 	private int quantity;
 	private double price;
+	private String format = "%15s %5s %5s %15s %n";
 	
 	public Product() {
 		name = "Default Name";
@@ -18,6 +19,11 @@ public class Product {
 		this.quantity = quantity;
 		this.price = price;
 		this.category = category;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format(format, name, quantity, price, category);
 	}
 	
 	public String getName() {

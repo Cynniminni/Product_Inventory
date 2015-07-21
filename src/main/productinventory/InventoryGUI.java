@@ -9,10 +9,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
-import database.productinventory.JDBCDriver;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * InventoryGUI creates and assembles the user interface and attaches
@@ -34,6 +37,8 @@ public class InventoryGUI {
 	
 	private static JTextArea invenTable;
 	
+	private static JScrollPane scrollPane;
+	
 	private JTextField searchBar;
 	
 	private JLabel searchHeader;
@@ -46,26 +51,38 @@ public class InventoryGUI {
 	private JButton removeProduct;
 	
 	private String title = "Product Inventory";
+	
+	private static JTable table;	
 		
 	/**
-	 * Initializes and assembles the GUI.
+	 * Initializes and assembles the GUI, and attaches the appropriate listeners to
+	 * each component.
 	 */
 	public InventoryGUI() {
 		frame = new JFrame();
-		frame.setSize(700, 500);
+		frame.setSize(750, 300);
 		frame.setTitle(title);
 		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+					
+		table = new JTable(JDBCDriver.getDataModel());
+		table.setAutoCreateRowSorter(true);
+		table.setFillsViewportHeight(true);
+		table.addPropertyChangeListener(new TableCellListener(table, InventoryListeners.editRowAction()));
+		scrollPane = new JScrollPane(table);
+		
+//		invenTable = new JTextArea();
+//		invenTable.setSize(470, 300);
+//		invenTable.setEditable(false);
+//		invenTable.setEnabled(true);
+//		invenTable.setLineWrap(true);
+//		invenTable.setWrapStyleWord(true);
+//		invenTable.setFont(new Font("Monospaced", Font.PLAIN, 12));//set font for proper alignment
 				
-		invenTable = new JTextArea();
-		invenTable.setSize(470, 500);
-		invenTable.setEditable(false);
-		invenTable.setEnabled(true);
-		invenTable.setLineWrap(true);
-		invenTable.setWrapStyleWord(true);
-		invenTable.setFont(new Font("Monospaced", Font.PLAIN, 12));//set font for proper alignment
-				
+//		scrollPane = new JScrollPane(invenTable);
+//		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+//		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);		
+		
 		searchHeader = new JLabel("Search");		
 		searchHeader.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		
@@ -94,7 +111,7 @@ public class InventoryGUI {
 		searchPanel.add(refreshInven);				
 		
 		managePanel = new JPanel();
-		//managePanel.setLayout(new BoxLayout(managePanel, BoxLayout.X_AXIS));
+//		managePanel.setLayout(new BoxLayout(managePanel, BoxLayout.X_AXIS));
 		managePanel.setLayout(new GridLayout(1,3));
 		managePanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
 		managePanel.add(addProduct);
@@ -104,6 +121,7 @@ public class InventoryGUI {
 		actionPanel = new JPanel();
 		actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
 		actionPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);	
+		actionPanel.add(Box.createVerticalStrut(10));
 		actionPanel.add(searchHeader);
 		actionPanel.add(Box.createVerticalStrut(5));
 		actionPanel.add(searchPanel);
@@ -117,7 +135,7 @@ public class InventoryGUI {
 		
 		invenPanel = new JPanel();
 		invenPanel.setLayout(new GridLayout(1,1));
-		invenPanel.add(invenTable);
+		invenPanel.add(scrollPane);
 		
 		containerPanel = new JPanel();//has FlowLayout by default
 		containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.X_AXIS));
@@ -127,14 +145,17 @@ public class InventoryGUI {
 		containerPanel.add(Box.createHorizontalStrut(10));
 		
 		frame.add(containerPanel);
-	}
+		frame.setVisible(true);
+	}	
 	
 	/**
 	 * Updates the text area with the current listing of products
 	 * from the database.
 	 */
 	public static void updateInventory() {
-		invenTable.setText(JDBCDriver.selectTable());
+//		invenTable.setText(JDBCDriver.selectTable());
+		table.setModel(JDBCDriver.getDataModel());
+		table.updateUI();		
 	}
 	
 	/**

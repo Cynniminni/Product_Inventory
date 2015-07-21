@@ -1,5 +1,11 @@
 package main.productinventory;
-import database.productinventory.JDBCDriver;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.JFrame;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * Initializes the GUI, establishes connection, and prints
@@ -10,6 +16,7 @@ import database.productinventory.JDBCDriver;
  */
 public class Main {
 
+	
 	public static void main(String[] args) {
 		// initialize GUI
 		InventoryGUI gui = new InventoryGUI();
@@ -21,4 +28,5 @@ public class Main {
 		gui.updateInventory();		
 	}//end main
 	
+		
 }//end class
