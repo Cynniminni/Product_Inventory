@@ -7,4 +7,5 @@ Based on project description from https://blog.udemy.com/java-projects/.
 <img src="https://cloud.githubusercontent.com/assets/6732705/8762980/57c2a49e-2d3e-11e5-926f-036e15b219da.png" alt="Chart of project functions: Store, search, overview, update products"/>
 
 <h3>Current Screenshot</h3>
-<img src="https://cloud.githubusercontent.com/assets/6732705/8764523/273eafd2-2d95-11e5-9f7b-b6fc163b4e80.png" alt="Screenshot of the program"/>
+<h5>Update: 7/20/2015</h5>
+<img src="https://cloud.githubusercontent.com/assets/6732705/8791200/86715784-2f0c-11e5-9722-9afb5b0fc16e.png" alt="Program screenshot with JTable added"/>
