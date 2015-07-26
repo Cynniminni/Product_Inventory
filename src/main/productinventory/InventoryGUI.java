@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -68,7 +69,7 @@ public class InventoryGUI {
 		table.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);		
 		table.setAutoCreateRowSorter(true);
 		table.setFillsViewportHeight(true);		
-		table.getSelectionModel().addListSelectionListener(InventoryListeners.makeSelectionListener(table));
+		table.addMouseListener(InventoryListeners.makeSelectionListener(table));
 		scrollPane = new JScrollPane(table);		
 		
 		searchHeader = new JLabel("Search");		
@@ -140,6 +141,7 @@ public class InventoryGUI {
 	 * from the database.
 	 */
 	public static void updateInventory() {		
+		System.out.println(SwingUtilities.isEventDispatchThread());
 		table.setModel(JDBCDriver.getDataModel());
 		table.updateUI();		
 	}

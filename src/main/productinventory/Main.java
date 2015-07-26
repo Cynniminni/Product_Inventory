@@ -1,5 +1,7 @@
 package main.productinventory;
 
+import javax.swing.SwingUtilities;
+
 
 /**
  * Initializes the GUI, establishes connection, and prints
@@ -19,7 +21,7 @@ public class Main {
 		JDBCDriver.testConnection();
 				
 		// print inventory into text area				
-		gui.updateInventory();		
+		gui.updateInventory();			
 	}//end main
 	
 		

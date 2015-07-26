@@ -1,11 +1,10 @@
 package main.productinventory;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.SQLException;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -65,11 +64,34 @@ public class InventoryListeners {
 		return isDouble;
 	}//end is double		
 	
-	public static ListSelectionListener makeSelectionListener(final JTable table) {
-		return new ListSelectionListener() {
+	public static MouseListener makeSelectionListener(final JTable table) {
+		return new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
 
 			@Override
-			public void valueChanged(ListSelectionEvent e) {
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
 				//get old product								
 				int selectedRow = table.getSelectedRow();
 				
@@ -84,7 +106,7 @@ public class InventoryListeners {
 						price,
 						category);
 				
-				System.out.println("[debug]: edit product = " + editProduct);
+				System.out.println("[debug]: row = " + selectedRow + ", edit product = " + editProduct);
 			}
 			
 		};
@@ -220,7 +242,7 @@ public class InventoryListeners {
 
 							//update the product with new info 
 							JDBCDriver.updateProduct(oldName, update);
-//							InventoryGUI.updateInventory();
+							InventoryGUI.updateInventory();
 							System.out.println("[debug]: Updating product");
 						} catch (SQLException|NumberFormatException ex) {
 							InventoryPopups.showErrorPopup("Please fill all fields correctly.");
