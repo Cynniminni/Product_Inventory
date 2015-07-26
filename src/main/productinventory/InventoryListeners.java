@@ -5,8 +5,12 @@ import java.sql.SQLException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * InventoryListeners produces button listeners for the search,
@@ -19,6 +23,7 @@ import javax.swing.JTextField;
 public class InventoryListeners {	
 	
 	private static JTextField searchBar;
+	private static Product editProduct;
 	
 	public InventoryListeners(JTextField searchBar) {
 		this.searchBar = searchBar;
@@ -60,20 +65,30 @@ public class InventoryListeners {
 		return isDouble;
 	}//end is double		
 	
-	public static Action editRowAction() {
-		return new AbstractAction() {
+	public static ListSelectionListener makeSelectionListener(final JTable table) {
+		return new ListSelectionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-//				TableCellListener tcl = (TableCellListener)e.getSource();
-//		        System.out.println("Row   : " + tcl.getRow());
-//		        System.out.println("Column: " + tcl.getColumn());
-//		        System.out.println("Old   : " + tcl.getOldValue());
-//		        System.out.println("New   : " + tcl.getNewValue());
+			public void valueChanged(ListSelectionEvent e) {
+				//get old product								
+				int selectedRow = table.getSelectedRow();
+				
+				String oldKey = (String) table.getValueAt(selectedRow, InventoryConstants.NAME);
+				int quantity = (int) table.getValueAt(selectedRow, InventoryConstants.QUANTITY);
+				double price = (double) table.getValueAt(selectedRow, InventoryConstants.PRICE);
+				String category = (String) table.getValueAt(selectedRow, InventoryConstants.CATEGORY);
+				
+				editProduct = new Product(
+						oldKey,
+						quantity,
+						price,
+						category);
+				
+				System.out.println("[debug]: edit product = " + editProduct);
 			}
 			
 		};
-	}
+	}//end make selection listener
 	
 	/**
 	 * This method will take the text from the searchbar, check
@@ -91,7 +106,9 @@ public class InventoryListeners {
 				
 				String userInput = searchBar.getText();
 				Product product = null;
-				if (isInteger(userInput)) {
+				if (userInput.equalsIgnoreCase("")) {
+					InventoryPopups.showErrorPopup("Please enter a product name.");
+				} else if (isInteger(userInput)) {
 					//search products by quantity
 					product = JDBCDriver.selectProduct(Integer.valueOf(userInput));
 				} else if (isDouble(userInput)) {
@@ -180,18 +197,19 @@ public class InventoryListeners {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("[debug]: Test edit product!");
 				//prompt user to choose a product by name
-				int result = InventoryPopups.showSelectPopup();
+//				int result = InventoryPopups.showSelectPopup();
 				
 				//if user clicked OK
-				if (result == JOptionPane.OK_OPTION) {
+//				if (result == JOptionPane.OK_OPTION) {
 					//save old name of product selected
-					String oldName = InventoryPopups.getName();
+//					String oldName = InventoryPopups.getName();
 					
 					//query the selected product
-					Product product = JDBCDriver.selectProduct(oldName);
+//					Product product = JDBCDriver.selectProduct(oldName);
 									
 					//populate fields and prompt user to edit them
-					int editResult = InventoryPopups.showInputPopup(InventoryPopups.EDIT, product);
+					int editResult = InventoryPopups.showInputPopup(InventoryPopups.EDIT, editProduct);
+					String oldName = editProduct.getName();
 					
 					if (editResult == JOptionPane.OK_OPTION) {						
 						try {
@@ -202,13 +220,14 @@ public class InventoryListeners {
 
 							//update the product with new info 
 							JDBCDriver.updateProduct(oldName, update);
-							InventoryGUI.updateInventory();
+//							InventoryGUI.updateInventory();
+							System.out.println("[debug]: Updating product");
 						} catch (SQLException|NumberFormatException ex) {
 							InventoryPopups.showErrorPopup("Please fill all fields correctly.");
-							//ex.printStackTrace();
+							ex.printStackTrace();
 						}						
 					}//end inner if
-				}//end if
+//				}//end if
 			}			
 		};
 	}//end editproduct

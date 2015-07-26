@@ -45,7 +45,7 @@ public class JDBCDriver {
 	 * @return The DefaultTableModel representing the database.
 	 */
 	public static DefaultTableModel getDataModel() {				
-		DefaultTableModel model = new DefaultTableModel();
+		NonEditableModel model = new NonEditableModel();
 		
 		try {
 			Connection conn = DriverManager.getConnection(
@@ -80,6 +80,17 @@ public class JDBCDriver {
 		return model;
 	}//end selectall
 	
+	/**
+	 * A class that overrides the isCellEditable method so that users cannot
+	 * edit the cells of the JTable by double-clicking
+	 *
+	 */
+	private static class NonEditableModel extends DefaultTableModel {
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+	}
 	/**
 	 * Tests the connection to the database and prints the result.
 	 */

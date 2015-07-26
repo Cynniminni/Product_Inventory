@@ -1,11 +1,5 @@
 package main.productinventory;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import javax.swing.JFrame;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 
 /**
  * Initializes the GUI, establishes connection, and prints

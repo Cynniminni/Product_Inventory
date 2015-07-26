@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,9 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * InventoryGUI creates and assembles the user interface and attaches
@@ -60,28 +59,17 @@ public class InventoryGUI {
 	 */
 	public InventoryGUI() {
 		frame = new JFrame();
-		frame.setSize(750, 300);
+		frame.setSize(700, 300);
 		frame.setTitle(title);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 					
 		table = new JTable(JDBCDriver.getDataModel());
+		table.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);		
 		table.setAutoCreateRowSorter(true);
-		table.setFillsViewportHeight(true);
-		table.addPropertyChangeListener(new TableCellListener(table, InventoryListeners.editRowAction()));
-		scrollPane = new JScrollPane(table);
-		
-//		invenTable = new JTextArea();
-//		invenTable.setSize(470, 300);
-//		invenTable.setEditable(false);
-//		invenTable.setEnabled(true);
-//		invenTable.setLineWrap(true);
-//		invenTable.setWrapStyleWord(true);
-//		invenTable.setFont(new Font("Monospaced", Font.PLAIN, 12));//set font for proper alignment
-				
-//		scrollPane = new JScrollPane(invenTable);
-//		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-//		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);		
+		table.setFillsViewportHeight(true);		
+		table.getSelectionModel().addListSelectionListener(InventoryListeners.makeSelectionListener(table));
+		scrollPane = new JScrollPane(table);		
 		
 		searchHeader = new JLabel("Search");		
 		searchHeader.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -111,7 +99,6 @@ public class InventoryGUI {
 		searchPanel.add(refreshInven);				
 		
 		managePanel = new JPanel();
-//		managePanel.setLayout(new BoxLayout(managePanel, BoxLayout.X_AXIS));
 		managePanel.setLayout(new GridLayout(1,3));
 		managePanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
 		managePanel.add(addProduct);
@@ -152,8 +139,7 @@ public class InventoryGUI {
 	 * Updates the text area with the current listing of products
 	 * from the database.
 	 */
-	public static void updateInventory() {
-//		invenTable.setText(JDBCDriver.selectTable());
+	public static void updateInventory() {		
 		table.setModel(JDBCDriver.getDataModel());
 		table.updateUI();		
 	}
