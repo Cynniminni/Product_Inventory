@@ -5,14 +5,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-
-import main.productinventory.*;
 
 /**
  * JDBCDriver establishes a connection to the database and provides the methods to 
@@ -38,6 +33,19 @@ public class JDBCDriver {
 	public static String divider = "==============================";
 	public static String format = "%20s %10s %10s %15s %n";
 	
+	public static DefaultTableModel productToModel(Product product) {
+		NonEditableModel model = new NonEditableModel();
+		Object[] row = new Object[COL_NAMES.length];
+		row[InventoryConstants.NAME] = product.getName();
+		row[InventoryConstants.QUANTITY] = product.getQuantity();
+		row[InventoryConstants.PRICE] = product.getPrice();
+		row[InventoryConstants.CATEGORY] = product.getCategory();
+		
+		model.setColumnIdentifiers(COL_NAMES);
+		model.addRow(row);
+		
+		return model;
+	}
 	
 	/**
 	 * Selects all from the database, takes the ResultSet and 
@@ -173,8 +181,9 @@ public class JDBCDriver {
 		}	
 		
 		return resultText;
-	}
-		
+	}			
+	
+	
 	/**
 	 * Select a product by name.
 	 * @param name The name of the product.
@@ -219,6 +228,7 @@ public class JDBCDriver {
 	 */
 	public static Product selectProduct(int quantity) {
 		Product product = new Product();
+		Product[] products = null;
 		
 		try {
 			//get connection to the database
@@ -232,12 +242,16 @@ public class JDBCDriver {
 			ResultSet result = statement.executeQuery(
 					"SELECT * FROM products WHERE quantity = " + quantity);			
 			
+			products = new Product[result.getMetaData().getColumnCount()];
+			
 			while (result.next()) {
-				product = new Product(
-						result.getString("name"),
-						Integer.parseInt(result.getString("quantity")),
-						Double.parseDouble(result.getString("price")),					
-						result.getString("category"));
+//				product = new Product(
+//						result.getString("name"),
+//						Integer.parseInt(result.getString("quantity")),
+//						Double.parseDouble(result.getString("price")),					
+//						result.getString("category"));
+				
+				
 			}					
 			
 			conn.close();

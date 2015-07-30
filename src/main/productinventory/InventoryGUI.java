@@ -33,9 +33,7 @@ public class InventoryGUI {
 	private JPanel invenPanel;
 	private JPanel actionPanel;
 	private JPanel searchPanel;
-	private JPanel managePanel;
-	
-	private static JTextArea invenTable;
+	private JPanel managePanel;	
 	
 	private static JScrollPane scrollPane;
 	
@@ -62,7 +60,7 @@ public class InventoryGUI {
 		frame = new JFrame();
 		frame.setSize(700, 300);
 		frame.setTitle(title);
-		frame.setResizable(false);
+//		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 					
 		table = new JTable(JDBCDriver.getDataModel());
@@ -141,7 +139,6 @@ public class InventoryGUI {
 	 * from the database.
 	 */
 	public static void updateInventory() {		
-		System.out.println(SwingUtilities.isEventDispatchThread());
 		table.setModel(JDBCDriver.getDataModel());
 		table.updateUI();		
 	}
@@ -151,17 +148,8 @@ public class InventoryGUI {
 	 * InventoryListeners).
 	 * @param result The search result from InventoryListeners.
 	 */
-	public static void updateInventory(String result) {		
-		String header = JDBCDriver.divider + JDBCDriver.divider + "\n";
-		String titles = String.format(JDBCDriver.format, 
-				"Product",
-				"Quantity",
-				"Price",
-				"Category");
-		
-		invenTable.setText(header);
-		invenTable.append(titles);
-		invenTable.append(header);
-		invenTable.append(result);
+	public static void updateInventory(DefaultTableModel model) {					
+		table.setModel(model);
+		table.updateUI();
 	}
 }//end class

@@ -8,8 +8,7 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * InventoryListeners produces button listeners for the search,
@@ -130,28 +129,23 @@ public class InventoryListeners {
 				Product product = null;
 				if (userInput.equalsIgnoreCase("")) {
 					InventoryPopups.showErrorPopup("Please enter a product name.");
-				} else if (isInteger(userInput)) {
-					//search products by quantity
-					product = JDBCDriver.selectProduct(Integer.valueOf(userInput));
-				} else if (isDouble(userInput)) {
-					//search products by price
-					product = JDBCDriver.selectProduct(Double.valueOf(userInput));
+				} else if (isDouble(userInput)) {//search by price
+					double inputNum = Double.valueOf(userInput);
+					product = JDBCDriver.selectProduct(inputNum);
+					
+					DefaultTableModel result = JDBCDriver.productToModel(product);
+					
+					InventoryGUI.updateInventory(result);
 				} else {
 					//search products by name
 					product = JDBCDriver.selectProduct(userInput);		
-				}//end if-else
-				
-				//format the result into a string
-				String result = String.format(JDBCDriver.format, 
-						product.getName(),
-						product.getQuantity(),
-						product.getPrice(),
-						product.getCategory());
-				
-				//update text view with the string
-				InventoryGUI.updateInventory(result);
-			}
-			
+					
+					DefaultTableModel result = JDBCDriver.productToModel(product);
+					
+					//update text view with the string
+					InventoryGUI.updateInventory(result);
+				}//end if-else				
+			}			
 		};
 	}//end editproduct
 	
@@ -207,9 +201,7 @@ public class InventoryListeners {
 	}//end addproduct
 	
 	/**
-	 * Users select a product by name, after which they will edit
-	 * the existing fields for that product. Then the selected product
-	 * will be updated in the database.
+	 * Edits the selected product in a popup window.
 	 * @return The ActionListener for editing an existing product.
 	 */
 	public static ActionListener editProductListener() {
@@ -218,17 +210,6 @@ public class InventoryListeners {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("[debug]: Test edit product!");
-				//prompt user to choose a product by name
-//				int result = InventoryPopups.showSelectPopup();
-				
-				//if user clicked OK
-//				if (result == JOptionPane.OK_OPTION) {
-					//save old name of product selected
-//					String oldName = InventoryPopups.getName();
-					
-					//query the selected product
-//					Product product = JDBCDriver.selectProduct(oldName);
-									
 					//populate fields and prompt user to edit them
 					int editResult = InventoryPopups.showInputPopup(InventoryPopups.EDIT, editProduct);
 					String oldName = editProduct.getName();
@@ -249,40 +230,31 @@ public class InventoryListeners {
 							ex.printStackTrace();
 						}						
 					}//end inner if
-//				}//end if
 			}			
 		};
 	}//end editproduct
 		
 	/**
-	 * User chooses the product to remove by name. A popup will appear
-	 * confirming the user's choice, and then removes the product from
-	 * the database.
+	 * Deletes the product after confirming user's selection.
 	 * @return The ActionListener for removing an existing product.
 	 */
 	public static ActionListener removeProductListener() {
 		return new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				//add something to the database
-				System.out.println("[debug]: Test remove product!");
-				int choice = InventoryPopups.showSelectPopup();
+			public void actionPerformed(ActionEvent e) {				
+				String name = editProduct.getName();
+				int result = InventoryPopups.showConfirmationPopup(name);
 				
-				if (choice == JOptionPane.OK_OPTION) {					
-					String name = InventoryPopups.getName();
-					int result = InventoryPopups.showConfirmationPopup(name);
-					
-					if (result == JOptionPane.OK_OPTION) {
-						try {
-							JDBCDriver.deleteProduct(name);
-							InventoryGUI.updateInventory();
-						} catch (SQLException ex) {
-							InventoryPopups.showErrorPopup("Product must exist to be deleted.");
-							//ex.printStackTrace();
-						}						
-					}//end inner if
-				}//end if
+				if (result == JOptionPane.OK_OPTION) {
+					try {
+						JDBCDriver.deleteProduct(name);
+						InventoryGUI.updateInventory();
+					} catch (SQLException ex) {
+						InventoryPopups.showErrorPopup("Product must exist to be deleted.");
+						ex.printStackTrace();
+					}						
+				}//end inner if
 			}
 			
 		};
