@@ -189,8 +189,9 @@ public class JDBCDriver {
 	 * @param name The name of the product.
 	 * @return A product matching that of the given name, if any.
 	 */
-	public static Product selectProduct(String name) {
-		Product product = new Product();
+	public static DefaultTableModel selectProducts(String name) {
+		DefaultTableModel model = new DefaultTableModel();
+		model.setColumnIdentifiers(COL_NAMES);
 		
 		try {
 			//get connection to the database
@@ -202,14 +203,15 @@ public class JDBCDriver {
 			
 			//execute a query
 			ResultSet result = statement.executeQuery(
-					"SELECT * FROM products WHERE name = \'" + name + "\'");			
-			
+					"SELECT * FROM products WHERE name LIKE \'%" + name + "%\'");			
+						
 			while (result.next()) {
-				product = new Product(
-						result.getString("name"),
-						Integer.parseInt(result.getString("quantity")),
-						Double.parseDouble(result.getString("price")),					
-						result.getString("category"));
+				Object[] row = new Object[COL_NAMES.length];
+				for (int i = 0; i < row.length; i++) {
+					row[i] = result.getObject(i + 1);
+				}
+				
+				model.addRow(row);
 			}					
 			
 			conn.close();
@@ -218,7 +220,7 @@ public class JDBCDriver {
 			e.printStackTrace();
 		}
 		
-		return product;		
+		return model;		
 	}//end select product
 	
 	/**
@@ -226,50 +228,9 @@ public class JDBCDriver {
 	 * @param quantity
 	 * @return A product that matches the quantity.
 	 */
-	public static Product selectProduct(int quantity) {
-		Product product = new Product();
-		Product[] products = null;
-		
-		try {
-			//get connection to the database
-			Connection conn = DriverManager.getConnection(
-					JDBC_CONNECTION, USER, PASS);
-		
-			//create a statement
-			Statement statement = conn.createStatement();
-			
-			//execute a query
-			ResultSet result = statement.executeQuery(
-					"SELECT * FROM products WHERE quantity = " + quantity);			
-			
-			products = new Product[result.getMetaData().getColumnCount()];
-			
-			while (result.next()) {
-//				product = new Product(
-//						result.getString("name"),
-//						Integer.parseInt(result.getString("quantity")),
-//						Double.parseDouble(result.getString("price")),					
-//						result.getString("category"));
-				
-				
-			}					
-			
-			conn.close();
-					
-		} catch (Exception e) {	
-			e.printStackTrace();
-		}
-		
-		return product;		
-	}//end select product by quantity
-	
-	/**
-	 * Select a product by price.
-	 * @param price
-	 * @return A product that matches the price.
-	 */
-	public static Product selectProduct(double price) {
-		Product product = new Product();
+	public static DefaultTableModel selectProducts(double price) {		
+		DefaultTableModel model = new DefaultTableModel();
+		model.setColumnIdentifiers(COL_NAMES);
 		
 		try {
 			//get connection to the database
@@ -284,12 +245,16 @@ public class JDBCDriver {
 					"SELECT * FROM products WHERE price = " + price);			
 			
 			while (result.next()) {
-				product = new Product(
-						result.getString("name"),
-						Integer.parseInt(result.getString("quantity")),
-						Double.parseDouble(result.getString("price")),					
-						result.getString("category"));
-			}					
+				//save a row as an object array
+				Object[] row = new Object[COL_NAMES.length];
+				
+				for (int i = 0; i < COL_NAMES.length; i++) {
+					row[i] = result.getObject(i + 1);
+				}//end for
+				
+				//add array as a row
+				model.addRow(row);				
+			}//end while	
 			
 			conn.close();
 					
@@ -297,8 +262,8 @@ public class JDBCDriver {
 			e.printStackTrace();
 		}
 		
-		return product;		
-	}//end select product by quantity
+		return model;
+	}//end select product by quantity	
 	
 	/**
 	 * Adds a new product to the database.

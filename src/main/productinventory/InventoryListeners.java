@@ -130,19 +130,11 @@ public class InventoryListeners {
 				if (userInput.equalsIgnoreCase("")) {
 					InventoryPopups.showErrorPopup("Please enter a product name.");
 				} else if (isDouble(userInput)) {//search by price
-					double inputNum = Double.valueOf(userInput);
-					product = JDBCDriver.selectProduct(inputNum);
-					
-					DefaultTableModel result = JDBCDriver.productToModel(product);
-					
+					double inputNum = Double.valueOf(userInput);										
+					DefaultTableModel result = JDBCDriver.selectProducts(inputNum);					
 					InventoryGUI.updateInventory(result);
 				} else {
-					//search products by name
-					product = JDBCDriver.selectProduct(userInput);		
-					
-					DefaultTableModel result = JDBCDriver.productToModel(product);
-					
-					//update text view with the string
+					DefaultTableModel result = JDBCDriver.selectProducts(userInput);					
 					InventoryGUI.updateInventory(result);
 				}//end if-else				
 			}			
@@ -159,8 +151,6 @@ public class InventoryListeners {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//add something to the database
-				//System.out.println("[debug]: Test refresh product!");
 				InventoryGUI.updateInventory();
 			}			
 		};
@@ -243,8 +233,16 @@ public class InventoryListeners {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {				
-				String name = editProduct.getName();
-				int result = InventoryPopups.showConfirmationPopup(name);
+				int result = 0;
+				String name = "";
+				
+				try {
+					name = editProduct.getName();
+					result = InventoryPopups.showConfirmationPopup(name);					
+				} catch (NullPointerException ex) {
+					InventoryPopups.showErrorPopup("Please select a product.");
+					ex.printStackTrace();
+				}
 				
 				if (result == JOptionPane.OK_OPTION) {
 					try {
